@@ -1,0 +1,14 @@
+﻿@{
+    Layout = null;
+    var motorId = UrlData[0].IsEmpty() ? 1 : UrlData[0].AsInt();
+    var db = Database.Open("ConexaoLocal");
+    var sql = "select ID, MOT_MODELO from MOTOR where MOT_ID_FABRICANTE= @0 order by MOT_MODELO";
+
+    string saida = "Selecione|Selecione...,";
+
+    foreach (var motor in db.Query(sql, motorId))
+    {
+        saida += @motor.ID + "|" + motor.MOT_MODELO + ",";
+    }
+    Json.Write(saida, Response.Output);
+}

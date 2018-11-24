@@ -1,0 +1,127 @@
+﻿@{
+    Page.Title = "Login - Galeria de Imagens";
+    Layout = "~/_LayoutLogin.cshtml";
+
+    // Inicializar variáveis gerais de página
+    var email = "";
+    var password = "";
+
+    var returnUrl = Request.QueryString["ReturnUrl"];
+    if (returnUrl.IsEmpty())
+    {
+        // Alguns provedores de logon externos requerem sempre um valor URL de retorno
+        returnUrl = Href("~/Adm/MenuPrincipal");
+    }
+
+    // Setup validation
+    Validation.RequireField("email", "É necessário especificar um endereço de email.");
+    Validation.RequireField("password", "É necessário especificar uma senha.");
+    Validation.Add("password",
+        Validator.StringLength(
+            maxLength: Int32.MaxValue,
+            minLength: 6,
+            errorMessage: "A senha deve ter ao menos 6 caracteres"));
+
+    // Caso esta seja uma solicitação POST, valide e processe os dados
+    if (IsPost)
+    {
+        AntiForgery.Validate();
+        // essa é uma solicitação de logon externa?
+        string provider = Request.Form["provider"];
+        if (!provider.IsEmpty())
+        {
+            OAuthWebSecurity.RequestAuthentication(provider, Href("~/Adm/Novo_Usuario.cshtml", new { returnUrl }));
+            return;
+        }
+        else if (Validation.IsValid())
+        {
+            email = Request.Form["email"];
+            password = Request.Form["password"];
+
+            if (WebSecurity.UserExists(email) && WebSecurity.GetPasswordFailuresSinceLastSuccess(email) > 
+                4 && WebSecurity.GetLastPasswordFailureDate(email).AddSeconds(60) > DateTime.UtcNow)
+            {
+                Response.Redirect("~/Adm/AccountLockedOut");
+                return;
+            }
+
+            // Tentativa de logon usando as credenciais fornecidas
+            if (WebSecurity.Login(email, password))
+            {
+                Context.RedirectLocal(returnUrl);
+                return;
+            }
+            else
+            {
+                ModelState.AddFormError("O email ou senha fornecido está incorreto.");
+            }
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Login de Usuário</title>
+
+    <!-- Bootstrap -->
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <!-- NProgress -->
+    <link href="~/Content/nprogress.css" rel="stylesheet" />
+    <!-- Animate.css -->
+    <link href="~/Content/animate.css/animate.min.css" rel="stylesheet" />
+
+    <!-- Custom Theme Style -->
+    <link href="~/Libs/Gentelella/css/custom.min.css" rel="stylesheet" />
+</head>
+
+<body class="login">
+    <div class="login_wrapper">
+        <div class="animate form login_form">
+            <section class="login_content">
+                <form method="post">
+                    @AntiForgery.GetHtml()
+                    @* Se existir um ou mais erros de validação, mostre um erro *@
+                    @Html.ValidationSummary("Login Incorreto. Corrija os erros e tente novamente.", excludeFieldErrors: true, htmlAttributes: null)
+                    <h1>Login de Usuário</h1>
+                    <div>
+                        <input type="text" class="form-control" placeholder="Email" name="email" @Validation.For("email") />
+                        @Html.ValidationMessage("email")
+                    </div>
+                    <div>
+                        <input type="password" class="form-control" placeholder="Senha" name="password" @Validation.For("password") />
+                        @Html.ValidationMessage("password")
+                    </div>
+                    <div>
+                        <input type="submit" value="Login" />
+                        <a class="reset_pass" href="#">Esqueceu sua senha?</a>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="separator">
+                        <div class="clearfix"></div>
+                        <br />
+                        <div>
+                            <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>
+                            <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
+
+@{
+
+}

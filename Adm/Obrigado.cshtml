@@ -1,0 +1,28 @@
+﻿@{
+    Page.Title = "Obrigado por Registar";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+@if (!WebSecurity.IsAuthenticated)
+{
+    <hgroup class="title">
+        <h1>@Page.Title.</h1>
+        <h2>Você ainda não terminou!</h2>
+    </hgroup>
+
+    <p>
+        Um e-mail com instruções sobre como ativar sua conta foi enviada a você.
+    </p>
+}
+else
+{
+    <hgroup class="title">
+        <h1>@Page.Title.</h1>
+        <h2>Pronto você terminou.</h2>
+    </hgroup>
+
+    <p>
+        Parce que você já confirmou a sua conta e está tudo certo 
+        para seguir em frente.
+    </p>
+}

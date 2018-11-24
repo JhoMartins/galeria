@@ -1,0 +1,50 @@
+﻿@{
+    Page.Title = "Cadastro de Caminhões - Menu";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+
+    var db = Database.Open("ConexaoLocal");
+
+    var selecao = db.Query("select * from Caminhao order by CAM_MODELO");
+    var grid = new WebGrid(source: selecao, rowsPerPage: 2);
+}
+
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Menu de Modelos de Caminhões</h3>
+        </div>
+    </div>
+</div>
+
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+
+            <div class="x_content">
+
+                <div align="right">
+                    <a href="@Href("~/adm/Caminhao_Inclusao.cshtml")">
+                        <input type="button" class="btn btn-primary"
+                               value="Inclusão de Novo Modelo" />
+                    </a>
+                </div>
+
+                @grid.GetHtml(tableStyle: "table table-striped",
+                              columns: grid.Columns(grid.Column("ID", style: "col-md-2"),
+                              grid.Column("CAM_ID_FABRICANTE","Código do Fabricante", style: "col-md-2"),
+                              grid.Column("CAM_ID_MOTOR","Código do Motor", style: "col-md-2"),
+                              grid.Column("CAM_PLACA","Placa do Caminhão", style: "col-md-3"),
+                              grid.Column("CAM_ANO","Ano do Caminhão", style: "col-md-3"),
+                              grid.Column("CAM_MODELO","Modelo do Caminhão", style: "col-md-6"),
+                             grid.Column(format: @<a href="@Href("~/Adm/Caminhao_Alteracao.cshtml", item.ID)" 
+                                                     class="btn btn-xs btn-warning">Alterar</a>),
+                         grid.Column(format: @<a href="@Href("~/Adm/Caminhao_Exclusao.cshtml", item.ID)"
+                                                 class="btn btn-xs btn-danger">Excluir</a>)
+                     )
+      )
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,128 @@
+﻿@{
+    Layout = "~/_LayoutLogin.cshtml";
+    Page.Title = "Registrar Usuário";
+
+    // Inicializar variáveis gerais da página
+    var email = "";
+    var password = "";
+    var confirmPassword = "";
+
+    // Configurar validação
+    Validation.RequireField("email", "Você deve especificar um endereço de email.");
+    Validation.RequireField("password", "A senha não pode ficar em branco.");
+    Validation.Add("confirmPassword",
+        Validator.EqualsTo("password", "A senha e a confirmação de senha não correspondem."));
+    Validation.Add("password",
+        Validator.StringLength(
+            maxLength: Int32.MaxValue,
+            minLength: 6,
+            errorMessage: "A senha deve ter pelo menos 6 caracteres"));
+
+    // Se essa for uma solicitação POST, valide e processe os dados
+    if (IsPost)
+    {
+        AntiForgery.Validate();
+        email = Request.Form["email"];
+        password = Request.Form["password"];
+        confirmPassword = Request.Form["confirmPassword"];
+
+        // Se todas as informações forem válidas, crie uma nova conta
+        if (Validation.IsValid())
+        {
+            // Insira um novo usuário no banco de dados
+            var db = Database.Open("ConexaoLocal");
+
+            // Verifique se o usuário já existe
+            var user = db.QuerySingle("SELECT Email FROM UserProfile WHERE LOWER(Email) = LOWER(@0)", email);
+            if (user == null)
+            {
+                // Insira o email na tabela de perfil
+                db.Execute("INSERT INTO UserProfile (Email) VALUES (@0)", email);
+
+                // Crie e associe uma nova entrada no banco de dados de associação.
+                // Caso tenha êxito, continue processando a solicitação
+                try
+                {
+                    bool requireEmailConfirmation = !WebMail.SmtpServer.IsEmpty();
+                    var token = WebSecurity.CreateAccount(email, password, requireEmailConfirmation);
+                    if (requireEmailConfirmation)
+                    {
+                        var hostUrl = Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped);
+                        var confirmationUrl = hostUrl + VirtualPathUtility.ToAbsolute("~/Account/Confirm?confirmationCode=" + HttpUtility.UrlEncode(token));
+
+                        WebMail.Send(
+                            to: email,
+                            subject: "Confirme sua conta",
+                            body: "Seu código de confirmação é: " + token + 
+                            ". Visit <a href=\"" + confirmationUrl + "\">" + confirmationUrl + "</a> para ativar sua conta."
+                        );
+                    }
+
+                    if (requireEmailConfirmation)
+                    {
+                        // Agradeça ao usuário por se registrar e informe que um email será enviado
+                        Response.Redirect("~/Adm/Thanks.cshtml");
+                    }
+                    else
+                    {
+                        // Volte para a página inicial e saia
+                        WebSecurity.Login(email, password);
+
+                        Response.Redirect("~/");
+                    }
+                }
+                catch (System.Web.Security.MembershipCreateUserException e)
+                {
+                    ModelState.AddFormError(e.Message);
+                }
+            }
+            else
+            {
+                // O usuário já existe
+                ModelState.AddFormError("Email já esta em uso");
+            }
+        }
+    }
+}
+
+<form method="post">
+     @AntiForgery.GetHtml()
+     @* Se houver pelo menos um erro de validação, notifique o usuário *@
+     @Html.ValidationSummary("A criação da conta não foi bem-sucedida. Corrija os erros e tente novamente.", excludeFieldErrors: true, htmlAttributes: null)
+     <h1>Criação de Conta de Usuário</h1>
+     <div>
+        <input type="email" id="email" class="form-control" name="email" value="@email" placeholder="Endereço de Email" @Validation.For("email") />
+         @* Grave todos os erros de validação de email na página *@
+         @Html.ValidationMessage("email")
+     </div>
+     <div>
+         <input type="password" id="password" class="form-control" name="password" placeholder="Senha" @Validation.For("password") />
+         @* Grave todos os erros de validação de senha na página *@
+         @Html.ValidationMessage("password")
+     </div>
+     <div>
+        <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" placeholder="Confirme sua senha" @Validation.For("confirmPassword") />
+        @* Grave todos os erros de validação de senha na página *@
+        @Html.ValidationMessage("confirmPassword")
+     </div>
+      <div>
+          <input type="submit" class="btn btn-default submit" value="Cadastrar"/>
+      </div>
+
+    <div class="clearfix"></div>
+
+    <div class="separator">
+      <p class="change_link">
+         Já é membro?
+         <a href="~/Adm/Default.cshtml" class="to_register"> Log in </a>
+      </p>
+
+       <div class="clearfix"></div>
+      <br />
+
+     <div>
+       <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>
+       <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
+     </div>
+    </div>
+</form>

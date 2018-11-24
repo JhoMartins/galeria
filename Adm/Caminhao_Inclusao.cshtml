@@ -1,0 +1,185 @@
+﻿@{
+    Page.Title = "Cadastro de Caminhões - Inclusão";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+
+    var db = Database.Open("ConexaoLocal");
+
+    Validation.RequireField("iptFabricante",
+        "O campo [Fabricante] é de preenchimento obrigatório");
+    Validation.RequireField("iptMotor",
+        "O campo [Motor] é de preenchimento obrigatório");
+    Validation.RequireField("iptPlaca",
+        "O campo [Placa] é de preenchimento obrigatório");
+    Validation.RequireField("iptAnoF",
+        "O campo [Ano de Fabricação] é de preenchimento obrigatório");
+    Validation.RequireField("iptAnoM",
+        "O campo [Ano do Modelo] é de preenchimento obrigatório");
+
+    var f = Request.Form["iptFabricante"];
+    var m = Request.Form["iptMotor"];
+    var p = Request.Form["iptPlaca"];
+    var af = Request.Form["iptAnoF"];
+    var am = Request.Form["iptAnoM"];
+
+    if (IsPost && Validation.IsValid())
+    {
+
+        var InsetQuery = "INSERT INTO Caminhao (CAM_ID_FABRICANTE, CAM_ID_MOTOR, CAM_PLACA, CAM_ANO, CAM_MODELO) " +
+            "VALUES (@0,@1,@2,@3,@4)";
+        db.Execute(InsetQuery, f, m, p, af, am);
+
+        Response.Redirect("Caminhao_Menu.cshtml");
+    }
+
+
+}
+
+<script>
+    function listaMotor(valor) {
+        http.open("GET", "GetMotor.cshtml/" + valor, true);
+        // reloadModelo é o arquivo que faz a conexao com o banco e o select necessario
+        http.onreadystatechange = handleHttpResponse;
+        http.send(null);
+
+    }
+
+    function handleHttpResponse() {
+        campo_select = document.forms[0].iptMotor;
+        if (http.readyState == 4) {
+            campo_select.options.length = 0;
+            results = http.responseText.split(",");
+            for (i = 0; i < results.length - 1; i++) {
+                string = results[i].split("|");
+                campo_select.options[i] = new Option(string[1], string[0]);
+            }
+        }
+    }
+
+    function getHTTPObject() {
+        var req;
+
+        try {
+            if (window.XMLHttpRequest) {
+                req = new XMLHttpRequest();
+
+                if (req.readyState == null) {
+                    req.readyState = 1;
+                    req.addEventListener("load", function () {
+                        req.readyState = 4;
+                        if (typeof req.onReadyStateChange == "function")
+                            req.onReadyStateChange();
+                    },
+                        false);
+                }
+
+                return req;
+            }
+
+            if (window.ActiveXObject) {
+                var prefixes = ["MSXML2", "Microsoft", "MSXML", "MSXML3"];
+
+                for (var i = 0; i < prefixes.length; i++) {
+                    try {
+                        req = new ActiveXObject(prefixes[i] + ".XmlHttp");
+                        return req;
+                    } catch (ex) { };
+
+                }
+            }
+        } catch (ex) { }
+
+        alert("XmlHttp Objects not supported by client browser");
+    }
+
+    var http = getHTTPObject();
+
+</script>
+
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Cadastro de Caminhões</h3>
+        </div>
+    </div>
+</div>
+
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+
+            <div class="x_content">
+              
+                @if (IsPost && !Validation.IsValid())
+                {
+                <div class="alert alert-danger" role="alert">
+                    <h3><strong>Erro!</strong></h3>
+                    <p>Ocorreram o(s) seguinte(s) erro(s):</p>
+                    @Html.ValidationSummary()
+                </div>
+                }
+                
+                <form method="post" action="~/Adm/Caminhao_Inclusao.cshtml"
+                      enctype="multipart/form-data">
+
+                    <div align="right">
+                        <a href="@Href("~/adm/Caminhao_Menu.cshtml")">
+                            <input type="button" class="btn btn-default"
+                                   value="Fechar sem Salvar" />
+                        </a>
+                        <input type="submit" name="salvar" class="btn btn-primary"
+                               value="Salvar" />
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Fabricante</label>
+                            <select class="form-control" name="iptFabricante" 
+                                    onchange="listaMotor(this.value)"/>
+                            <option value="">Selecione...</option>
+                            @{ 
+                                var pesq_fab = "SELECT ID, FAB_NOME FROM FABRICANTE ORDER BY FAB_NOME";
+
+                                foreach (var fabricante in db.Query(pesq_fab))
+                                {
+                                    <option value="@fabricante.ID">@fabricante.FAB_NOME</option>
+                                }
+                            }
+                            </select>
+                        </div>
+                      
+                        <div class="form-group col-md-6">
+                            <label>Motor</label>
+                            <select class="form-control" name="iptMotor" />
+                            <option value="">Selecione um fabricante...</option>
+                            
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label>Placa</label>
+                            <input type="text" class="form-control"
+                                   name="iptPlaca" maxlength="7"
+                                   placeholder="Digite a placa do veículo" />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Ano de Fabricação:</label>
+                            <input type="text" class="form-control"
+                                   name="iptAnoF" maxlength="4"
+                                   placeholder="Digite o ano de fabricação do veículo" />
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Ano Modelo</label>
+                            <input type="text" class="form-control"
+                                   name="iptAnoM" maxlength="4" 
+                                   placeholder="Digite o ano do modelo do veiculo" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+﻿@{ 
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Adm/Default.cshtml");
+    }
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@Page.Title</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/nprogress.css" rel="stylesheet" />
+    <link href="~/Libs/Gentelella/css/custom.min.css" rel="stylesheet" />
+
+    <!-- Datatables -->
+    <link href="~/Content/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
+    @*@Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")*@
+</head>
+
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Gentelella Alela!</span></a>
+                    </div>
+                    <div class="clearfix"></div>
+                    <!-- menu profile quick info -->
+                    @RenderPage("_MenuPerfil.cshtml")
+                    <!-- /menu profile quick info -->
+                    <br />
+                    <!-- sidebar menu -->
+                    @RenderPage("_MenuLateral.cshtml")
+                    <!-- /sidebar menu -->
+                    <!-- /menu footer buttons -->
+                    @RenderPage("_MenuInferior.cshtml")
+                    <!-- /menu footer buttons -->
+                </div>
+            </div>
+            <!-- top navigation -->
+            @RenderPage("_MenuSuperior.cshtml")
+            <!-- /top navigation -->
+            <!-- page content -->
+            <div class="right_col" role="main">
+                @RenderBody()
+            </div>
+            <!-- /page content -->
+            <!-- footer content -->
+            @RenderPage("_Rodape.cshtml")
+            <!-- /footer content -->
+        </div>
+    </div>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/fastclick.js"></script>
+    <script src="~/Scripts/nprogress.min.js"></script>
+    <script src="~/Libs/Gentelella/js/custom.min.js"></script>
+
+    <!-- Datatables -->
+    <script src="~/Content/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/Content/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="~/Content/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/Content/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+    <script src="~/Content/datatables.net-buttons/js/buttons.flash.min.js"></script>
+    <script src="~/Content/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/Content/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="~/Content/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/Content/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+    <script src="~/Content/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/Content/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+    <script src="~/Content/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+    @*@Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)*@
+</body>
+
+
+
+</html>

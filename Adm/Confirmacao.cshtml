@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    Page.Title = "Página de Confirmação de Conta";
+
+    string message = "";
+    var confirmationToken = Request["confirmationCode"];
+
+    WebSecurity.Logout();
+    if (!confirmationToken.IsEmpty())
+    {
+        if (WebSecurity.ConfirmAccount(confirmationToken))
+        {
+            message = "registro confirmado! Clique na guia de login para fazer acesso ao site";
+        }
+        else
+        {
+            message = "Não foi possivel confirmar suas informações de registro.";
+        }
+    }
+}
+
+<hgroup class="title">
+    <h1>@Page.Title.</h1>
+    <h2>Use o formulário aabaixo para confirmar sua conta.</h2>
+</hgroup>
+
+@if (!message.IsEmpty())
+{
+    <p>@message</p>
+}
+else
+{
+    <form method="post">
+        <fieldset>
+            <legend>Código de Confirmação</legend>
+            <ol>
+                <li>
+                    <label for="confirmationCode">Código de Confirmação</label>
+                    <input type="text" id="confirmationCode" name="confirmationCode" />
+                </li>
+            </ol>
+            <input type="submit" value="Confirm" />
+        </fieldset>
+    </form>
+}
