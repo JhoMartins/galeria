@@ -8,14 +8,14 @@
     var n = "";
     var l = "";
 
-    var ID_FABRIC = UrlData[0];
+    var ID_IMAGEM = UrlData[0];
     var ID_ALBUM = UrlData[1];
 
     if (ID_ALBUM.IsEmpty())
     {
         Response.Redirect("~/Adm/Album_Menu.cshtml");
     }
-    else if (ID_FABRIC.IsEmpty())
+    else if (ID_IMAGEM.IsEmpty())
     {
         Response.Redirect(@Href("~/Adm/Imagem_Menu.cshtml", ID_ALBUM));
     }
@@ -53,7 +53,7 @@
             n = Request.Form["iptDescricao"];
 
             var alteracaoQuery = "UPDATE Imagem SET DESCRICAO=@1, FOTO=@2 " + " WHERE ID=@0 ";
-            db.Execute(alteracaoQuery, ID_FABRIC, n, nomeArquivo);
+            db.Execute(alteracaoQuery, ID_IMAGEM, n, nomeArquivo);
 
             Response.Redirect(@Href("~/Adm/Imagem_Menu.cshtml", ID_ALBUM));
         }
@@ -61,7 +61,7 @@
     else
     {
         var selecaoQuery = "SELECT * FROM Imagem WHERE ID = @0";
-        var linha = db.QuerySingle(selecaoQuery, ID_FABRIC);
+        var linha = db.QuerySingle(selecaoQuery, ID_IMAGEM);
 
         n = linha.DESCRICAO;
         l = linha.FOTO;
@@ -96,7 +96,7 @@
                 }
                 
                 
-                  <form method="post" action="@Href("~/Adm/Imagem_Alteracao.cshtml", ID_FABRIC, ID_ALBUM)"
+                  <form method="post" action="@Href("~/Adm/Imagem_Alteracao.cshtml", ID_IMAGEM, ID_ALBUM)"
                         enctype="multipart/form-data">
 
                     <div align="right">
