@@ -9,11 +9,17 @@
     var l = "";
 
     var ID_FABRIC = UrlData[0];
+    var ID_ALBUM = UrlData[1];
 
-    if (ID_FABRIC.IsEmpty())
+    if (ID_ALBUM.IsEmpty())
     {
-        Response.Redirect("~/Adm/Imagem_Menu.cshtml");
+        Response.Redirect("~/Adm/Album_Menu.cshtml");
     }
+    else if (ID_FABRIC.IsEmpty())
+    {
+        Response.Redirect(@Href("~/Adm/Imagem_Menu.cshtml", ID_ALBUM));
+    }
+
 
     var db = Database.Open("ConexaoLocal");
 
@@ -31,7 +37,7 @@
             if (imagem != null)
             {
                 LogoApaga = Request.Form["imagemApagar"];
-                
+
                 if (System.IO.File.Exists(LogoApaga))
                 {
                     System.IO.File.Delete(@"~\Arquivos\"+LogoApaga);
@@ -49,7 +55,7 @@
             var alteracaoQuery = "UPDATE Imagem SET DESCRICAO=@1, FOTO=@2 " + " WHERE ID=@0 ";
             db.Execute(alteracaoQuery, ID_FABRIC, n, nomeArquivo);
 
-            Response.Redirect("~/Adm/Imagem_Menu.cshtml");
+            Response.Redirect(@Href("~/Adm/Imagem_Menu.cshtml", ID_ALBUM));
         }
     }
     else
@@ -90,11 +96,11 @@
                 }
                 
                 
-                  <form method="post" action="@Href("~/Adm/Imagem_Alteracao.cshtml", ID_FABRIC)"
+                  <form method="post" action="@Href("~/Adm/Imagem_Alteracao.cshtml", ID_FABRIC, ID_ALBUM)"
                         enctype="multipart/form-data">
 
                     <div align="right">
-                        <a href="@Href("~/adm/Imagem_Menu.cshtml")">
+                        <a href="@Href("~/Adm/Imagem_Menu.cshtml", ID_ALBUM)">
                             <input type="button" class="btn btn-default"
                                    value="Fechar sem Salvar" />
                         </a>

@@ -11,7 +11,7 @@
         Response.Redirect("~/Adm/Album_Menu.cshtml");
     }
 
-    var selecao = db.Query("select ID, DESCRICAO, FOTO, DATA_CRIACAO " + "from Imagem WHERE ALBUM_ID = @0 ORDER BY ID", ID_ALBUM);
+    var selecao = db.Query("select ID, DESCRICAO, FOTO, DATA_CRIACAO, ALBUM_ID " + "from Imagem WHERE ALBUM_ID = @0 ORDER BY ID", ID_ALBUM);
     var grid = new WebGrid(source: selecao, rowsPerPage: 10);
 }
 
@@ -46,9 +46,9 @@
                    grid.Column("DATA_CRIACAO", "Criação", style: "col-md-2"),
                    grid.Column(format: @<img src="@Href("~/Arquivos/", "mini_" + item.FOTO)" />),
                    grid.Column(format: @<a href="@Href("~/Adm/Imagem_Alteracao.cshtml",
-                         item.ID)" class="btn btn-xs btn-warning">Alterar</a>),
+                         item.ID, item.ALBUM_ID)" class="btn btn-xs btn-warning">Alterar</a>),
                    grid.Column(format: @<a href="@Href("~/Adm/Imagem_Exclusao.cshtml",
-                         item.ID)" class="btn btn-xs btn-danger">Excluir</a>
+                         item.ID, item.ALBUM_ID)" class="btn btn-xs btn-danger">Excluir</a>
                    )))
             </div>
         </div>
