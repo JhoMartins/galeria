@@ -9,6 +9,7 @@
 
     var desc = Request.Form["iptDescricao"];
     WebImage imagem = null;
+    WebImage imagem_mini = null;
     var nomeArquivo = "";
 
     if (IsPost && Validation.IsValid())
@@ -19,6 +20,8 @@
         {
             nomeArquivo = Guid.NewGuid().ToString() + "_" + Path.GetFileName(imagem.FileName);
             imagem.Save(@"~\Arquivos\" + nomeArquivo);
+            imagem_mini = imagem.Resize(width: 100, height: 100, preserveAspectRatio: true);
+            imagem_mini.Save(@"~\Arquivos\mini_" + nomeArquivo);
         }
 
         var InsetQuery = "INSERT INTO Album (DESCRICAO, CAPA) " + "VALUES (@0,@1)";
