@@ -1,0 +1,84 @@
+﻿@{
+    Page.Title = "Cadastro de Albuns";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+
+    var db = Database.Open("ConexaoLocal");
+
+    Validation.RequireField("iptDescricao", "O campo [Descrição] é de preenchimento obrigatório");
+    //Validation.RequireField("iptFoto", "O campo [Foto] é de preenchimento obrigatório");
+
+    var desc = Request.Form["iptDescricao"];
+    WebImage imagem = null;
+    WebImage imagem_mini = null;
+    var nomeArquivo = "";
+
+    if (IsPost && Validation.IsValid())
+    {
+        imagem = WebImage.GetImageFromRequest();
+
+        if (imagem != null)
+        {
+            nomeArquivo = Guid.NewGuid().ToString() + "_" + Path.GetFileName(imagem.FileName);
+            imagem.Save(@"~\Arquivos\" + nomeArquivo);
+            imagem_mini = imagem.Resize(width: 100, height: 100, preserveAspectRatio: true);
+            imagem_mini.Save(@"~\Arquivos\mini_" + nomeArquivo);
+        }
+
+        var InsetQuery = "INSERT INTO Album (DESCRICAO, CAPA) " + "VALUES (@0,@1)";
+        db.Execute(InsetQuery, desc, nomeArquivo);
+
+        Response.Redirect("Album_Menu.cshtml");
+    }
+}
+
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Cadastro de Album</h3>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+
+            <div class="x_content">
+
+                @if (IsPost && !Validation.IsValid())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <h3><strong>Erro!</strong></h3>
+                        <p>Ocorreram o(s) seguinte(s) erro(s):</p>
+                        @Html.ValidationSummary()
+                    </div>
+                }
+
+                <form method="post" action="~/Adm/Album_Inclusao.cshtml" enctype="multipart/form-data">
+
+                    <div align="right">
+                        <a href="@Href("~/adm/Album_Menu.cshtml")">
+                            <input type="button" class="btn btn-default" value="Fechar sem Salvar" />
+                        </a>
+                        <input type="submit" name="salvar" class="btn btn-primary" value="Salvar" />
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Descrição</label>
+                            <textarea class="form-control" name="iptDescricao" placeholder="Digite a descrição" maxlength="300"> </textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Foto</label>
+                            <input type="file" class="form-control" name="iptCapa" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,18 +1,17 @@
 ﻿@{
-    Page.Title = "Cadastro de Fabricante - Menu";
+    Page.Title = "Albuns";
     Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
 
     var db = Database.Open("ConexaoLocal");
 
-    var selecao = db.Query("select ID, FAB_NOME, FAB_LOGO " +
-        "from FABRICANTE order BY FAB_NOME");
+    var selecao = db.Query("select ID, DESCRICAO, CAPA " + "from Album order BY ID");
     var grid = new WebGrid(source: selecao, rowsPerPage: 10);
 }
 
 <div class="">
     <div class="page-title">
         <div class="title_left">
-            <h3>Menu de Fabricante</h3>
+            <h3>Menu de Album</h3>
         </div>
     </div>
 </div>
@@ -26,23 +25,23 @@
             <div class="x_content">
 
                 <div align="right">
-                    <a href="@Href("~/adm/Fabricante_Inclusao.cshtml")">
+                    <a href="@Href("~/adm/Album_Inclusao.cshtml")">
                         <input type="button" class="btn btn-primary"
-                               value="Inclusão de Fabricante" />
+                               value="Inclusão de Album" />
                     </a>
                 </div>
 
                 @grid.GetHtml(htmlAttributes: new { id = "datatable-buttons" },
-                tableStyle: "table table-striped table-bordered",
-               columns: grid.Columns(
+                tableStyle: "table table-striped",
+                columns: grid.Columns(
                    grid.Column("ID","Código",style: "col-md-2"),
-                   grid.Column("FAB_NOME","Nome Fabricante", style: "col-md-6"),
-                   grid.Column(format: @<img src="@Href("~/LogoFabricante/", "mini_" + item.FAB_LOGO)" />),
-                   grid.Column(format: @<a href="@Href("~/Adm/Fabricante_Alteracao.cshtml",
+                   grid.Column("DESCRICAO","Descrição", style: "col-md-6"),
+                   grid.Column(format: @<img src="@Href("~/Arquivos/","mini_" + item.CAPA)" />),
+                     grid.Column(format: @<a href="@Href("~/Adm/Album_Alteracao.cshtml",
                          item.ID)" class="btn btn-xs btn-warning">Alterar</a>),
-                   grid.Column(format: @<a href="@Href("~/Adm/Fabricante_Exclusao.cshtml",
+                 grid.Column(format: @<a href="@Href("~/Adm/Album_Exclusao.cshtml",
                          item.ID)" class="btn btn-xs btn-danger">Excluir</a>
-                   )))
+             )))
             </div>
         </div>
     </div>

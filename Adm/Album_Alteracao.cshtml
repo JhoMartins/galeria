@@ -1,0 +1,131 @@
+﻿@{
+    Page.Title = "Album - Alteração";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+
+    Validation.RequireField("iptDescricao", "O campo [Descrição] é de preenchimento obrigatório");
+
+    var d = "";
+    var l = "";
+
+    var ID_ALBUM = UrlData[0];
+
+    if (ID_ALBUM.IsEmpty())
+    {
+        Response.Redirect("~/Adm/Fabricante_Menu.cshtml");
+    }
+
+    var db = Database.Open("ConexaoLocal");
+
+    WebImage imagem = null;
+    WebImage imagem_mini = null;
+    var nomeArquivo = "";
+    var LogoApaga = "";
+
+    if (IsPost && Validation.IsValid())
+    {
+        if (ModelState.IsValid)
+        {
+            imagem = WebImage.GetImageFromRequest();
+
+            if (imagem != null)
+            {
+                LogoApaga = Request.Form["imagemApagar"];
+                
+                if (System.IO.File.Exists(LogoApaga))
+                {
+                    System.IO.File.Delete(@"~\Arquivos\"+LogoApaga);
+                    System.IO.File.Delete(@"~\Arquivos\mini_" + LogoApaga);
+                }
+
+                nomeArquivo = Guid.NewGuid().ToString() + "_" + Path.GetFileName(imagem.FileName);
+                imagem.Save(@"~\Arquivos\" + nomeArquivo);
+                imagem_mini = imagem.Resize(width: 100, height: 100, preserveAspectRatio: true);
+                imagem_mini.Save(@"~\Arquivos\mini_" + nomeArquivo);
+            }
+
+            d = Request.Form["iptDescricao"];
+
+            var alteracaoQuery = "UPDATE Album SET DESCRICAO=@1, CAPA=@2 " +
+                " WHERE ID=@0 ";
+            db.Execute(alteracaoQuery, ID_ALBUM, d, nomeArquivo);
+
+            Response.Redirect("~/Adm/Album_Menu.cshtml");
+        }
+    }
+    else
+    {
+        var selecaoQuery = "SELECT * FROM Album WHERE ID = @0";
+        var linha = db.QuerySingle(selecaoQuery, ID_ALBUM);
+
+        d = linha.DESCRICAO;
+        l = linha.CAPA;
+    }
+
+
+}
+
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Alteração de Album</h3>
+        </div>
+    </div>
+</div>
+
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+
+            <div class="x_content">
+              
+                @if (IsPost && !Validation.IsValid())
+                {
+                <div class="alert alert-danger" role="alert">
+                    <h3><strong>Erro!</strong></h3>
+                    <p>Ocorreram o(s) seguinte(s) erro(s):</p>
+                    @Html.ValidationSummary()
+                </div>
+                }
+                
+                
+                  <form method="post" action="@Href("~/Adm/Album_Alteracao.cshtml", ID_ALBUM)"
+                        enctype="multipart/form-data">
+
+                    <div align="right">
+                        <a href="@Href("~/adm/Album_Menu.cshtml")">
+                            <input type="button" class="btn btn-default"
+                                   value="Fechar sem Salvar" />
+                        </a>
+                        <input type="submit" name="salvar" class="btn btn-warning"
+                               value="Salvar" />
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Nome</label>
+                            <textarea class="form-control" name="iptDescricao" placeholder="Digite a Descrição" maxlength="300">@d</textarea>
+                        </div>
+                    </div>
+
+
+                      <div class="row">
+                          <div class="form-group col-md-12">
+                              <label>Capa</label>
+                              <input type="file" class="form-control" name="iptCapa" />
+                              <input type="hidden" name="imagemApagar" value="@l" />
+                          </div>
+                      </div>
+
+                      <div class="row">
+                          <div class="form-group col-md-12">
+                              <label>Capa Nome: @l</label>
+                              <p><img src="~/Arquivos/@l" width="500"/></p>
+                          </div>
+                      </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
