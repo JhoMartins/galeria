@@ -21,9 +21,9 @@
             imagem.Save(@"~\Arquivos\" + nomeArquivo);
         }
 
-        var InsetQuery = "INSERT INTO Imagem (DESCRICAO, FOTO) " +
-            "VALUES (@0,@1)";
-        db.Execute(InsetQuery, desc, nomeArquivo);
+        var InsetQuery = "INSERT INTO Imagem (DESCRICAO, FOTO, DATA_CRIACAO) " +
+            "VALUES (@0,@1, @2)";
+        db.Execute(InsetQuery, desc, nomeArquivo, DateTime.Now);
 
         Response.Redirect("Imagem_Menu.cshtml");
     }
