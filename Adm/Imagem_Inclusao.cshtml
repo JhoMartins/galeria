@@ -4,11 +4,20 @@
 
     var db = Database.Open("ConexaoLocal");
 
+    var ID_ALBUM = UrlData[0];
+
+    if (ID_ALBUM.IsEmpty())
+    {
+        Response.Redirect("~/Adm/Album_Menu.cshtml");
+    }
+
+
     Validation.RequireField("iptDescricao", "O campo [Descrição] é de preenchimento obrigatório");
     //Validation.RequireField("iptFoto", "O campo [Foto] é de preenchimento obrigatório");
 
     var desc = Request.Form["iptDescricao"];
     WebImage imagem = null;
+    WebImage imagem_mini = null;
     var nomeArquivo = "";
 
     if (IsPost && Validation.IsValid())
@@ -19,13 +28,15 @@
         {
             nomeArquivo = Guid.NewGuid().ToString() + "_" + Path.GetFileName(imagem.FileName);
             imagem.Save(@"~\Arquivos\" + nomeArquivo);
+            imagem_mini = imagem.Resize(width: 100, height: 100, preserveAspectRatio: true);
+            imagem_mini.Save(@"~\Arquivos\mini_" + nomeArquivo);
         }
 
-        var InsetQuery = "INSERT INTO Imagem (DESCRICAO, FOTO, DATA_CRIACAO) " +
-            "VALUES (@0,@1, @2)";
-        db.Execute(InsetQuery, desc, nomeArquivo, DateTime.Now);
+        var InsetQuery = "INSERT INTO Imagem (DESCRICAO, FOTO, DATA_CRIACAO, ALBUM_ID) " +
+            "VALUES (@0,@1, @2, @3)";
+        db.Execute(InsetQuery, desc, nomeArquivo, DateTime.Now, ID_ALBUM);
 
-        Response.Redirect("Imagem_Menu.cshtml");
+        Response.Redirect(@Href("~/Adm/Imagem_Menu.cshtml", ID_ALBUM));
     }
 }
 
@@ -53,10 +64,10 @@
                     </div>
                 }
 
-                <form method="post" action="~/Adm/Imagem_Inclusao.cshtml" enctype="multipart/form-data">
+                <form method="post" action="@Href("~/Adm/Imagem_Inclusao.cshtml", ID_ALBUM)" enctype="multipart/form-data">
 
                     <div align="right">
-                        <a href="@Href("~/adm/Imagem_Menu.cshtml")">
+                        <a href="@Href("~/adm/Imagem_Menu.cshtml", ID_ALBUM)">
                             <input type="button" class="btn btn-default"
                                    value="Fechar sem Salvar" />
                         </a>
