@@ -37,11 +37,13 @@
                    grid.Column("ID","Código",style: "col-md-2"),
                    grid.Column("DESCRICAO","Descrição", style: "col-md-6"),
                    grid.Column(format: @<img src="@Href("~/Arquivos/","mini_" + item.CAPA)" />),
-                     grid.Column(format: @<a href="@Href("~/Adm/Album_Alteracao.cshtml",
+                   grid.Column(format: @<a href="@Href("~/Adm/Imagem_Menu.cshtml",
+                         item.ID)" class="btn btn-xs btn-primary">Imagens</a>),
+                   grid.Column(format: @<a href="@Href("~/Adm/Album_Alteracao.cshtml",
                          item.ID)" class="btn btn-xs btn-warning">Alterar</a>),
-                 grid.Column(format: @<a href="@Href("~/Adm/Album_Exclusao.cshtml",
+                   grid.Column(format: @<a href="@Href("~/Adm/Album_Exclusao.cshtml",
                          item.ID)" class="btn btn-xs btn-danger">Excluir</a>
-             )))
+                   )))
             </div>
         </div>
     </div>
