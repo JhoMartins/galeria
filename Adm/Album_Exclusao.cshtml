@@ -1,0 +1,78 @@
+﻿@{
+    Page.Title = "Album - Exclusão";
+    Layout = "~/Views/Shared/_LayoutGentelella.cshtml";
+
+    var ID_FABRIC = UrlData[0];
+
+    if (ID_FABRIC.IsEmpty())
+    {
+        Response.Redirect("~/Adm/Album_Menu.cshtml");
+    }
+
+    var db = Database.Open("ConexaoLocal");
+ 
+    var linha = db.QuerySingle("SELECT * FROM Album WHERE ID = @0", ID_FABRIC);
+    if (IsPost && !ID_FABRIC.IsEmpty())
+    {
+        var LogoApaga = linha.CAPA;
+            
+            if (System.IO.File.Exists(LogoApaga))
+            {
+                System.IO.File.Delete(@"~\Arquivos\"+LogoApaga);
+                System.IO.File.Delete(@"~\Arquivos\mini_" + LogoApaga);
+            }
+
+        var apagarQuery = "DELETE FROM Album WHERE ID=@0 ";
+        db.Execute(apagarQuery, ID_FABRIC);
+
+        Response.Redirect("~/Adm/Album_Menu.cshtml");
+    }
+}
+
+<div class="">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>Exclusão de Album</h3>
+        </div>
+    </div>
+</div>
+
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+
+            <div class="x_content">
+              
+             
+                
+                  <form method="post" action="@Href("~/Adm/Album_Exclusao.cshtml", ID_FABRIC)"
+                        enctype="multipart/form-data">
+
+                    <div align="right">
+                        <a href="@Href("~/adm/Album_Menu.cshtml")">
+                            <input type="button" class="btn btn-default" value="Fechar sem Excluir" />
+                        </a>
+                        <input type="submit" name="salvar" class="btn btn-danger" value="Excluir" />
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Nome</label>
+                            <textarea type="text" class="form-control" name="iptDescricao" placeholder="Digite o nome do Fabricante" maxlength="300">@linha.DESCRICAO</textarea>
+                        </div>
+                    </div>
+
+
+                       <div class="row">
+                          <div class="form-group col-md-12">
+                              <label>Capa Nome: @linha.CAPA</label>
+                              <p><img src="~/LogoFabricante/@linha.CAPA" width="500"/></p>
+                          </div>
+                      </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
