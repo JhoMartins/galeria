@@ -1,0 +1,106 @@
+﻿@{
+    Page.Title = "Imagens";
+
+
+
+    var n = "";
+    var l = "";
+
+    var ID_IMAGEM = UrlData[0];
+    var ID_ALBUM = UrlData[1];
+
+
+
+
+    var db = Database.Open("ConexaoLocal");
+    var selecaoQuery = "SELECT FOTO,DESCRICAO,DATA_CRIACAO FROM Imagem WHERE ALBUM_ID = @0";
+    var linha = db.QuerySingle(selecaoQuery, ID_IMAGEM);
+
+    //n = linha.DESCRICAO;
+    //l = linha.FOTO;
+
+
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body style="background-color:slategray">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span>  JDGaleria </a>
+                <a class="navbar-brand" href="~/Adm/Default.cshtml">| Logar</a>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <div class="container">
+        <div class="jumbotron">
+            <h1>ALBUM</h1>
+            <hr>
+            <p>
+                Aqui esta todas as nossas galerias.
+            </p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="page-header">
+            <h2 style="color:white">Guarde os Melhores Momentos</h2>
+        </div>
+    </div>
+    <div>
+        <div class="container">
+            @foreach (var row in db.Query(selecaoQuery, ID_IMAGEM)) {
+            <div class="col-sm-6 col-md-3">
+                <div class="thumbnail">
+                    <img src="@Href("~/Arquivos/", "mini_" + row.FOTO)" ;">
+
+                    <div class="caption">
+                        <h3>@row.DESCRICAO</h3>
+                        <H6>
+                            Criado em : @row.DATA_CRIACAO
+                        </H6>
+
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+
+
+
+
+    <footer class="page-footer font-small unique-color-dark pt-4" style="background-color:white">
+
+        <div class="container">
+            <ul class="list-unstyled list-inline text-center py-2">
+                <li>
+                    <h5>Sistemas de Informação Unimep</h5>
+                    <hr class="unique-color-dark pt-4">© 2018 Copyright:
+                    <a href="https://mdbootstrap.com/education/bootstrap/"></a>
+                </li>
+            </ul>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+>
