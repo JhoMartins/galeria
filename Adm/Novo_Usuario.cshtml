@@ -89,7 +89,7 @@
      @AntiForgery.GetHtml()
      @* Se houver pelo menos um erro de validação, notifique o usuário *@
      @Html.ValidationSummary("A criação da conta não foi bem-sucedida. Corrija os erros e tente novamente.", excludeFieldErrors: true, htmlAttributes: null)
-     <h1>Criação de Conta de Usuário</h1>
+     <h1>Criar Usuário</h1>
      <div>
         <input type="email" id="email" class="form-control" name="email" value="@email" placeholder="Endereço de Email" @Validation.For("email") />
          @* Grave todos os erros de validação de email na página *@
@@ -106,7 +106,7 @@
         @Html.ValidationMessage("confirmPassword")
      </div>
       <div>
-          <input type="submit" class="btn btn-default submit" value="Cadastrar"/>
+          <input type="submit" class="btn btn-primary submit" value="Cadastrar"/>
       </div>
 
     <div class="clearfix"></div>
@@ -120,9 +120,9 @@
        <div class="clearfix"></div>
       <br />
 
-     <div>
-       <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>
-       <p>©2016 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
-     </div>
+      <div>
+          <h1><i class="glyphicon glyphicon-camera"></i> JDGaleria</h1>
+          <p>©2018 All Rights Reserved. JDGaleria!</p>
+      </div>
     </div>
 </form>
