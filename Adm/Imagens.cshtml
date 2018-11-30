@@ -6,19 +6,29 @@
     var n = "";
     var l = "";
 
-    var ID_IMAGEM = UrlData[0];
-    var ID_ALBUM = UrlData[1];
+    var ID_ALBUM = UrlData[0];
 
-
+    if (ID_ALBUM.IsEmpty())
+    {
+      Response.Redirect("~/Galeria.cshtml");
+    }
 
 
     var db = Database.Open("ConexaoLocal");
     var selecaoQuery = "SELECT FOTO,DESCRICAO,DATA_CRIACAO FROM Imagem WHERE ALBUM_ID = @0";
-    var linha = db.QuerySingle(selecaoQuery, ID_IMAGEM);
+    var linha = db.Query(selecaoQuery, ID_ALBUM);
 
-    //n = linha.DESCRICAO;
-    //l = linha.FOTO;
+    Validation.RequireField("iptDescricao", "O campo [Descrição] é de preenchimento obrigatório");
 
+    if (IsPost && Validation.IsValid())
+    {
+        var desc = Request.Form["iptDescricao"];
+
+        var InsetQuery = "INSERT INTO Comentario (TEXTO, USUARIO_ID, ID_ALBUM, DATA_CRIACAO) " + "VALUES (@0,@1, @2,@3)";
+        db.Execute(InsetQuery, desc, WebSecurity.CurrentUserId, ID_ALBUM, DateTime.Now);
+
+        Response.Redirect("Imagens.cshtml");
+    }
 
 
 }
@@ -60,7 +70,7 @@
     </div>
     <div>
         <div class="container">
-            @foreach (var row in db.Query(selecaoQuery, ID_IMAGEM)) {
+            @foreach (var row in linha) {
             <div class="col-sm-6 col-md-3">
                 <div class="thumbnail">
                     <img src="@Href("~/Arquivos/", "mini_" + row.FOTO)" ;">
@@ -75,6 +85,25 @@
                 </div>
             </div>
             }
+
+            <div class="col-md-12">
+                <form method="post" action="~/Adm/Imagens.cshtml" enctype="multipart/form-data">
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Diga o que você achou!</label>
+                            <textarea class="form-control" name="iptDescricao" placeholder="Digite a descrição" maxlength="300" rows="3"> </textarea>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="submit" name="salvar" class="btn btn-primary" value="Comentar" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
