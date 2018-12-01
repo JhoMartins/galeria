@@ -27,7 +27,7 @@
     {
         if (!WebSecurity.IsAuthenticated)
         {
-            Response.Redirect("~/Adm/Default.cshtml");
+            Response.Redirect("~/Adm/Default.cshtml?returnUrl=" + Request.Url.LocalPath);
         }
         else
         {
@@ -104,7 +104,7 @@
                     <div class="row">
                         <div class="form-group col-md-12">
                             <label>Diga o que você achou!</label>
-                            <textarea class="form-control" name="iptDescricao" placeholder="Digite a descrição" maxlength="300" rows="3"> </textarea>
+                            <textarea class="form-control" name="iptDescricao" placeholder="Digite a descrição" maxlength="300" rows="3, required="true"> </textarea>
                         </div>
                         <div class="col-md-2">
                             <input type="submit" name="salvar" class="btn btn-primary" value="Comentar" />
