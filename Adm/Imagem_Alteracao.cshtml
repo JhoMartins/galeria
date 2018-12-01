@@ -45,8 +45,10 @@
                 }
 
                 nomeArquivo = Guid.NewGuid().ToString() + "_" + Path.GetFileName(imagem.FileName);
+                imagem.AddTextWatermark("JD", fontColor: "Yellow", fontFamily: "Arial", fontSize: 8, opacity: 100);
                 imagem.Save(@"~\Arquivos\" + nomeArquivo);
                 imagem_mini = imagem.Resize(width: 100, height: 100, preserveAspectRatio: true);
+                imagem_mini.AddTextWatermark("JD", fontColor: "Yellow", fontFamily: "Arial", fontSize: 8, opacity: 100);
                 imagem_mini.Save(@"~\Arquivos\mini_" + nomeArquivo);
             }
 
