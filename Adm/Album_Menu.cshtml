@@ -4,7 +4,9 @@
 
     var db = Database.Open("ConexaoLocal");
 
-    var selecao = db.Query("select ID, DESCRICAO, CAPA " + "from Album order BY ID");
+
+    var stringSelecao = "select ID, DESCRICAO, CAPA from Album WHERE USUARIO_ID = @0 order BY ID";
+    var selecao = db.Query(stringSelecao, WebSecurity.CurrentUserId);
     var grid = new WebGrid(source: selecao, rowsPerPage: 10);
 }
 

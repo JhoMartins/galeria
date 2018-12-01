@@ -8,6 +8,7 @@
     //Validation.RequireField("iptFoto", "O campo [Foto] é de preenchimento obrigatório");
 
     var desc = Request.Form["iptDescricao"];
+    var nome = Request.Form["iptNome"];
     WebImage imagem = null;
     WebImage imagem_mini = null;
     var nomeArquivo = "";
@@ -24,8 +25,8 @@
             imagem_mini.Save(@"~\Arquivos\mini_" + nomeArquivo);
         }
 
-        var InsetQuery = "INSERT INTO Album (DESCRICAO, CAPA) " + "VALUES (@0,@1)";
-        db.Execute(InsetQuery, desc, nomeArquivo);
+        var InsetQuery = "INSERT INTO Album (DESCRICAO, CAPA, USUARIO_ID, NOME) " + "VALUES (@0,@1,@2, @3)";
+        db.Execute(InsetQuery, desc, nomeArquivo, WebSecurity.CurrentUserId, nome);
 
         Response.Redirect("Album_Menu.cshtml");
     }
@@ -55,29 +56,36 @@
                     </div>
                 }
 
-                <form method="post" action="~/Adm/Album_Inclusao.cshtml" enctype="multipart/form-data">
+                    <form method="post" action="~/Adm/Album_Inclusao.cshtml" enctype="multipart/form-data">
 
-                    <div align="right">
-                        <a href="@Href("~/adm/Album_Menu.cshtml")">
-                            <input type="button" class="btn btn-default" value="Fechar sem Salvar" />
-                        </a>
-                        <input type="submit" name="salvar" class="btn btn-primary" value="Salvar" />
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <label>Descrição</label>
-                            <textarea class="form-control" name="iptDescricao" placeholder="Digite a descrição" maxlength="300"> </textarea>
+                        <div align="right">
+                            <a href="@Href("~/adm/Album_Menu.cshtml")">
+                                <input type="button" class="btn btn-default" value="Fechar sem Salvar" />
+                            </a>
+                            <input type="submit" name="salvar" class="btn btn-primary" value="Salvar" />
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <label>Foto</label>
-                            <input type="file" class="form-control" name="iptCapa" />
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label>Nome</label>
+                                <input type="text" class="form-control" name="iptNome" placeholder="Digite o Nome" maxlength="50" />
+                            </div>
                         </div>
-                    </div>
-                </form>
+
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label>Descrição</label>
+                                <textarea class="form-control" name="iptDescricao" placeholder="Digite a descrição" maxlength="300"> </textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label>Foto</label>
+                                <input type="file" class="form-control" name="iptCapa" />
+                            </div>
+                        </div>
+                    </form>
             </div>
         </div>
     </div>
