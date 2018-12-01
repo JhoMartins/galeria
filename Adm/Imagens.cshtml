@@ -18,19 +18,27 @@
     var selecaoQuery = "SELECT FOTO,DESCRICAO,DATA_CRIACAO FROM Imagem WHERE ALBUM_ID = @0";
     var linha = db.Query(selecaoQuery, ID_ALBUM);
 
-    var comentarioQuery = "SELECT * FROM Comentario WHERE ID_ALBUM = @0 ORDER BY ID DESC";
+    var comentarioQuery = "SELECT c.*, up.Email FROM Comentario c INNER JOIN UserProfile UP ON c.USUARIO_ID = up.UserId WHERE ID_ALBUM = @0 ORDER BY ID DESC";
     var comentarios = db.Query(comentarioQuery, ID_ALBUM);
 
     Validation.RequireField("iptDescricao", "O campo [Descrição] é de preenchimento obrigatório");
 
     if (IsPost && Validation.IsValid())
     {
-        var desc = Request.Form["iptDescricao"];
+        if (!WebSecurity.IsAuthenticated)
+        {
+            Response.Redirect("~/Adm/Default.cshtml");
+        }
+        else
+        {
+            var desc = Request.Form["iptDescricao"];
 
-        var InsetQuery = "INSERT INTO Comentario (TEXTO, USUARIO_ID, ID_ALBUM, DATA_CRIACAO) " + "VALUES (@0,@1, @2,@3)";
-        db.Execute(InsetQuery, desc, WebSecurity.CurrentUserId, ID_ALBUM, DateTime.Now);
+            var InsetQuery = "INSERT INTO Comentario (TEXTO, USUARIO_ID, ID_ALBUM, DATA_CRIACAO) " + "VALUES (@0,@1, @2,@3)";
+            db.Execute(InsetQuery, desc, WebSecurity.CurrentUserId, ID_ALBUM, DateTime.Now);
 
-        Response.Redirect(@Href("~/Adm/Imagens.cshtml", ID_ALBUM));
+            Response.Redirect(@Href("~/Adm/Imagens.cshtml", ID_ALBUM));
+        }
+
     }
 
 
@@ -73,20 +81,21 @@
     </div>
     <div>
         <div class="container">
-            @foreach (var row in linha) {
-            <div class="col-sm-6 col-md-3">
-                <div class="thumbnail">
-                    <img src="@Href("~/Arquivos/", "mini_" + row.FOTO)" ;">
+            @foreach (var row in linha)
+            {
+                <div class="col-sm-6 col-md-3">
+                    <div class="thumbnail">
+                        <img src="@Href("~/Arquivos/", "mini_" + row.FOTO)" ;">
 
-                    <div class="caption">
-                        <h3>@row.DESCRICAO</h3>
-                        <H6>
-                            Criado em : @row.DATA_CRIACAO
-                        </H6>
+                        <div class="caption">
+                            <h3>@row.DESCRICAO</h3>
+                            <H6>
+                                Criado em : @row.DATA_CRIACAO
+                            </H6>
 
+                        </div>
                     </div>
                 </div>
-            </div>
             }
 
             <div class="col-md-12">
@@ -101,25 +110,23 @@
                             <input type="submit" name="salvar" class="btn btn-primary" value="Comentar" />
                         </div>
                     </div>
-
-                    <div class="row">
-                        <br />
-                        @foreach (var comentario in comentarios)
-                        {
-                            <div class="col-md-12">
-                                <div class="card" style="width: 100%">
-                                    <div class="card-body">
-                                        <blockquote class="blockquote mb-0">
-                                            <p>@comentario.TEXTO</p>
-                                            <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
-                                        </blockquote>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-
-                    </div>
                 </form>
+            </div>
+            
+            <div class="col-md-12" style="margin-top: 15px;">
+                @foreach (var comentario in comentarios)
+                {
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <blockquote class="blockquote mb-0">
+                                <p>@comentario.TEXTO</p>
+                                <footer class="blockquote-footer">@comentario.Email<cite title="Source Title"> - @comentario.DATA_CRIACAO</cite></footer>
+                            </blockquote>
+                        </div>
+                    </div>
+
+                }
             </div>
         </div>
     </div>
