@@ -100,9 +100,9 @@
                         <input type="password" class="form-control" placeholder="Senha" name="password" @Validation.For("password") />
                         @Html.ValidationMessage("password")
                     </div>
-                    <div>
-                        <input class="btn btn-primary"type="submit" value="Login" />
-                        <a class="reset_pass" href="#">Esqueceu sua senha?</a>
+                    <div class="row">
+                        <input class="btn btn-primary" type="submit" value="Login" />
+                        <a class="reset_pass" href="~/Adm/Novo_Usuario.cshtml">Não está cadastrado?</a>
                     </div>
 
                     <div class="clearfix"></div>
