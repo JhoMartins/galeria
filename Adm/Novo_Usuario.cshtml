@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/_LayoutLogin.cshtml";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
     Page.Title = "Registrar Usuário";
 
     // Inicializar variáveis gerais da página
@@ -53,7 +53,7 @@
                         WebMail.Send(
                             to: email,
                             subject: "Confirme sua conta",
-                            body: "Seu código de confirmação é: " + token + 
+                            body: "Seu código de confirmação é: " + token +
                             ". Visit <a href=\"" + confirmationUrl + "\">" + confirmationUrl + "</a> para ativar sua conta."
                         );
                     }

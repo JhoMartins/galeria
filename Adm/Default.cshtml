@@ -1,8 +1,8 @@
 ﻿@{
     Page.Title = "Login - Galeria de Imagens";
-
-    // Inicializar variáveis gerais de página
-    var email = "";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+     // Inicializar variáveis gerais de página
+     var email = "";
     var password = "";
 
     var returnUrl = Request.QueryString["ReturnUrl"];
@@ -37,7 +37,7 @@
             email = Request.Form["email"];
             password = Request.Form["password"];
 
-            if (WebSecurity.UserExists(email) && WebSecurity.GetPasswordFailuresSinceLastSuccess(email) > 
+            if (WebSecurity.UserExists(email) && WebSecurity.GetPasswordFailuresSinceLastSuccess(email) >
                 4 && WebSecurity.GetLastPasswordFailureDate(email).AddSeconds(60) > DateTime.UtcNow)
             {
                 Response.Redirect("~/Adm/AccountLockedOut");
